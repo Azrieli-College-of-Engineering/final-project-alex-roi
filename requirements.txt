@@ -1,0 +1,12 @@
+# Race Condition Lab - Dependencies
+# ==================================
+# התקנה: pip install -r requirements.txt
+
+# Web Framework
+Flask==3.0.0
+
+# HTTP Requests (for attack tool)
+requests==2.31.0
+
+# Werkzeug (Flask dependency)
+Werkzeug==3.0.1
