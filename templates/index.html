@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusCloud — The Modern Team Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+        .pricing-popular { position: relative; }
+        .pricing-popular::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 4px 20px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl border-b border-gray-100 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold text-gray-900">NexusCloud</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm text-gray-600 hover:text-gray-900 transition">Features</a>
+                <a href="#pricing" class="text-sm text-gray-600 hover:text-gray-900 transition">Pricing</a>
+                <a href="#about" class="text-sm text-gray-600 hover:text-gray-900 transition">About</a>
+                <a href="/login" class="text-sm text-gray-600 hover:text-gray-900 transition">Log in</a>
+                <a href="/login" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-lg shadow-indigo-500/25">
+                    Get Started →
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 overflow-hidden">
+        <div class="hero-glow bg-indigo-500 w-[600px] h-[600px]" style="top: -200px; left: -100px;"></div>
+        <div class="hero-glow bg-violet-500 w-[500px] h-[500px]" style="top: -100px; right: -200px;"></div>
+        <div class="hero-glow bg-pink-500 w-[400px] h-[400px]" style="bottom: -200px; left: 40%;"></div>
+
+        <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 rounded-full px-4 py-1.5 mb-8">
+                <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+                <span class="text-sm text-indigo-700 font-medium">Now with AI-powered team analytics</span>
+            </div>
+
+            <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight mb-6 max-w-4xl mx-auto leading-[1.1]">
+                Manage your team<br>
+                <span class="gradient-text">like never before</span>
+            </h1>
+
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+                NexusCloud brings your entire team together. Manage subscriptions,
+                track usage, and collaborate seamlessly — all in one powerful platform.
+            </p>
+
+            <div class="flex items-center justify-center gap-4 flex-wrap">
+                <a href="/login" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-base font-semibold transition shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/40">
+                    Start Free Trial
+                </a>
+                <a href="#features" class="bg-gray-50 hover:bg-gray-100 text-gray-700 px-8 py-4 rounded-xl text-base font-semibold transition border border-gray-200">
+                    Learn More
+                </a>
+            </div>
+
+            <div class="flex items-center justify-center gap-8 sm:gap-12 mt-16">
+                <div>
+                    <div class="text-3xl font-bold text-gray-900">10K+</div>
+                    <div class="text-sm text-gray-500">Active Teams</div>
+                </div>
+                <div class="w-px h-12 bg-gray-200"></div>
+                <div>
+                    <div class="text-3xl font-bold text-gray-900">99.9%</div>
+                    <div class="text-sm text-gray-500">Uptime SLA</div>
+                </div>
+                <div class="w-px h-12 bg-gray-200"></div>
+                <div>
+                    <div class="text-3xl font-bold text-gray-900">50M+</div>
+                    <div class="text-sm text-gray-500">API Calls/Day</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Preview -->
+            <div class="mt-20 relative">
+                <div class="bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden max-w-4xl mx-auto float-animation">
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-800">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-gray-500 text-xs ml-3 font-mono">dashboard.nexuscloud.io</span>
+                    </div>
+                    <div class="p-6 grid grid-cols-3 gap-4">
+                        <div class="bg-gray-800 rounded-xl p-4">
+                            <div class="text-gray-400 text-xs mb-1">Account Credits</div>
+                            <div class="text-2xl font-bold text-green-400">$100.00</div>
+                        </div>
+                        <div class="bg-gray-800 rounded-xl p-4">
+                            <div class="text-gray-400 text-xs mb-1">Team Members</div>
+                            <div class="text-2xl font-bold text-white">5</div>
+                        </div>
+                        <div class="bg-gray-800 rounded-xl p-4">
+                            <div class="text-gray-400 text-xs mb-1">Pro Users</div>
+                            <div class="text-2xl font-bold text-amber-400">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By -->
+    <section class="py-16 border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-center text-sm text-gray-400 mb-8 uppercase tracking-wider font-medium">Trusted by innovative teams worldwide</p>
+            <div class="flex items-center justify-center gap-12 flex-wrap opacity-40">
+                <div class="text-2xl font-bold text-gray-400">Stripe</div>
+                <div class="text-2xl font-bold text-gray-400">Notion</div>
+                <div class="text-2xl font-bold text-gray-400">Linear</div>
+                <div class="text-2xl font-bold text-gray-400">Vercel</div>
+                <div class="text-2xl font-bold text-gray-400">Figma</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Everything your team needs</h2>
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto">
+                    Powerful features designed to streamline team management and boost productivity.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 card-hover border border-gray-100">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Team Management</h3>
+                    <p class="text-gray-500 leading-relaxed">Effortlessly manage team members, assign roles, and control access permissions from a single dashboard.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-hover border border-gray-100">
+                    <div class="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Cloud Infrastructure</h3>
+                    <p class="text-gray-500 leading-relaxed">Built on enterprise-grade cloud with automatic scaling and 99.9% uptime guarantee.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-hover border border-gray-100">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Enterprise Security</h3>
+                    <p class="text-gray-500 leading-relaxed">SOC 2 compliant with end-to-end encryption, SSO support, and advanced audit logging.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-hover border border-gray-100">
+                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Real-time Analytics</h3>
+                    <p class="text-gray-500 leading-relaxed">Get instant insights into team activity, resource usage, and performance metrics.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-hover border border-gray-100">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Lightning Fast API</h3>
+                    <p class="text-gray-500 leading-relaxed">RESTful API with sub-50ms response times and SDKs for all major languages.</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 card-hover border border-gray-100">
+                    <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Automated Workflows</h3>
+                    <p class="text-gray-500 leading-relaxed">Automate repetitive tasks with customizable workflows, webhooks, and integrations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Simple, transparent pricing</h2>
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto">Start free and scale as you grow. No hidden fees, no surprises.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Starter Plan -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 card-hover">
+                    <h3 class="text-xl font-semibold mb-2">Starter</h3>
+                    <p class="text-gray-500 mb-6">Perfect for small teams getting started.</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-bold">$0</span>
+                        <span class="text-gray-500">/seat/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Up to 10 team members
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            5 GB cloud storage
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Basic analytics
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Community support
+                        </li>
+                    </ul>
+                    <a href="/login" class="block text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3.5 rounded-xl font-medium transition">
+                        Get Started Free
+                    </a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="pricing-popular bg-white rounded-2xl p-8 border-2 border-indigo-500 card-hover shadow-xl shadow-indigo-500/10">
+                    <h3 class="text-xl font-semibold mb-2">Pro</h3>
+                    <p class="text-gray-500 mb-6">For growing teams that need more power.</p>
+                    <div class="mb-8">
+                        <span class="text-5xl font-bold">$100</span>
+                        <span class="text-gray-500">/seat/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Unlimited team members
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            100 GB cloud storage
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Advanced analytics &amp; reports
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Priority support + SLA
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Full API access &amp; webhooks
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            SSO &amp; advanced security
+                        </li>
+                    </ul>
+                    <a href="/login" class="block text-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3.5 rounded-xl font-medium transition shadow-lg shadow-indigo-500/25">
+                        Upgrade to Pro →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Loved by teams everywhere</h2>
+                <p class="text-lg text-gray-500">See what our customers have to say.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 border border-gray-100">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-600 mb-6">"NexusCloud transformed how we manage our team subscriptions. The dashboard is incredibly intuitive."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">SR</div>
+                        <div>
+                            <div class="font-medium text-sm">Sarah R.</div>
+                            <div class="text-gray-500 text-xs">CTO, TechFlow</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 border border-gray-100">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-600 mb-6">"The upgrade process is seamless. We went from 2 Pro users to a full team in minutes. Highly recommended!"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm">MK</div>
+                        <div>
+                            <div class="font-medium text-sm">Michael K.</div>
+                            <div class="text-gray-500 text-xs">VP Engineering, DataPipe</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 border border-gray-100">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-600 mb-6">"Best cloud platform we've used. The security features alone are worth the Pro upgrade."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-sm">LT</div>
+                        <div>
+                            <div class="font-medium text-sm">Lisa T.</div>
+                            <div class="text-gray-500 text-xs">Head of IT, CloudServe</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="about" class="py-24">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-3xl p-16 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+                <div class="relative z-10">
+                    <h2 class="text-4xl font-bold text-white mb-4">Ready to get started?</h2>
+                    <p class="text-xl text-indigo-100 mb-8">Join 10,000+ teams already using NexusCloud to power their workflows.</p>
+                    <div class="flex items-center justify-center gap-4 flex-wrap">
+                        <a href="/login" class="bg-white text-indigo-600 px-8 py-4 rounded-xl text-base font-semibold hover:bg-indigo-50 transition shadow-xl">
+                            Start Free Trial →
+                        </a>
+                        <a href="#pricing" class="border-2 border-white/30 text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/10 transition">
+                            View Pricing
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-4">
+                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold text-white">NexusCloud</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">The modern team workspace platform. Manage, collaborate, and scale with confidence.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition">Integrations</a></li>
+                        <li><a href="#" class="hover:text-white transition">Changelog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">About</a></li>
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-sm">&copy; 2026 NexusCloud, Inc. All rights reserved.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-white transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </a>
+                    <a href="#" class="hover:text-white transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                    <a href="#" class="hover:text-white transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

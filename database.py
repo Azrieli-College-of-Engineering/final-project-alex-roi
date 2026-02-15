@@ -54,8 +54,12 @@ def init_database():
         CREATE TABLE users (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
+            email TEXT,
+            role TEXT DEFAULT 'Member',
+            avatar_color TEXT DEFAULT '#6366f1',
             is_premium INTEGER DEFAULT 0,
-            upgraded_at TIMESTAMP
+            upgraded_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
     
@@ -84,13 +88,13 @@ def init_database():
     
     # הכנסת משתמשים התחלתיים
     users = [
-        (1, 'אליס'),
-        (2, 'בוב'),
-        (3, 'צ\'רלי'),
-        (4, 'דנה'),
-        (5, 'אבי')
+        (1, 'Alice Johnson', 'alice@techcorp.io', 'Frontend Developer', '#6366f1'),
+        (2, 'Bob Cohen', 'bob@techcorp.io', 'UI/UX Designer', '#06b6d4'),
+        (3, 'Charlie Levy', 'charlie@techcorp.io', 'Product Manager', '#f59e0b'),
+        (4, 'Dana Mizrahi', 'dana@techcorp.io', 'DevOps Engineer', '#10b981'),
+        (5, 'Avi Ben-David', 'avi@techcorp.io', 'Team Lead', '#ef4444')
     ]
-    cursor.executemany("INSERT INTO users (id, name) VALUES (?, ?)", users)
+    cursor.executemany("INSERT INTO users (id, name, email, role, avatar_color) VALUES (?, ?, ?, ?, ?)", users)
     
     # הכנסת יתרה התחלתית לארנק
     cursor.execute(

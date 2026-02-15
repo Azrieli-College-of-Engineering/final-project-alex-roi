@@ -26,8 +26,20 @@ if not os.path.exists('saas_platform.db'):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/')
+def landing():
+    """דף הנחיתה הראשי"""
+    return render_template('index.html')
+
+
+@app.route('/login')
+def login_page():
+    """דף ההתחברות"""
+    return render_template('login.html')
+
+
+@app.route('/dashboard')
 def dashboard():
-    """דף הדאשבורד הראשי"""
+    """דף הדאשבורד - פאנל ניהול"""
     return render_template('dashboard.html')
 
 
@@ -152,15 +164,16 @@ if __name__ == '__main__':
     print("""
 ╔═══════════════════════════════════════════════════════════════════╗
 ║                                                                   ║
-║   🔬 Race Condition Lab - SaaS Platform Simulation               ║
+║   ☁️  NexusCloud - Team Collaboration Platform                    ║
 ║                                                                   ║
-║   Dashboard: http://localhost:5000                                ║
+║   Website:   http://localhost:5000                                ║
+║   Dashboard: http://localhost:5000/dashboard                      ║
 ║                                                                   ║
 ║   API Endpoints:                                                  ║
-║   • GET  /api/stats         - סטטיסטיקות                         ║
-║   • POST /api/upgrade       - 🔴 שדרוג פגיע                       ║
-║   • POST /api/upgrade/secure - 🟢 שדרוג מאובטח                    ║
-║   • POST /api/reset         - איפוס המערכת                        ║
+║   • GET  /api/stats          - Platform statistics                ║
+║   • POST /api/upgrade        - Upgrade user to Pro                ║
+║   • POST /api/upgrade/secure - Secure upgrade endpoint            ║
+║   • POST /api/reset          - Reset platform data                ║
 ║                                                                   ║
 ╚═══════════════════════════════════════════════════════════════════╝
     """)
