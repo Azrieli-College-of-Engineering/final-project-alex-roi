@@ -1,55 +1,52 @@
 """
-database.py - מודול מסד הנתונים
-================================
-מסד נתונים SQLite עם WAL Mode לאפשר כתיבות מקביליות.
-זה קריטי להדגמת Race Condition - בלי WAL, הקובץ היה ננעל.
-
-Database module with SQLite WAL Mode to allow concurrent writes.
-This is critical for demonstrating Race Conditions.
+database.py - Database Module
+=============================
+SQLite database with WAL mode for concurrent write support.
+Critical for demonstrating race conditions effectively.
 """
 
 import sqlite3
 import os
 from datetime import datetime
 
-# נתיב מסד הנתונים
+# Database file path
 DB_PATH = os.path.join(os.path.dirname(__file__), 'saas_platform.db')
 
-# קבועים
-INITIAL_BALANCE = 100  # יתרה התחלתית בארנק
-UPGRADE_COST = 100     # עלות שדרוג לפרימיום
-NUM_USERS = 5          # מספר משתמשים במערכת
+# Constants
+INITIAL_BALANCE = 100  # Initial wallet balance
+UPGRADE_COST = 100     # Premium upgrade cost
+NUM_USERS = 5          # Number of users in system
 
 
 def get_connection():
     """
-    יצירת חיבור למסד הנתונים עם WAL Mode.
-    WAL (Write-Ahead Logging) מאפשר קריאות וכתיבות מקביליות.
+    Create database connection with WAL mode enabled.
+    WAL (Write-Ahead Logging) allows concurrent reads and writes.
     """
     conn = sqlite3.connect(DB_PATH, timeout=30)
-    conn.row_factory = sqlite3.Row  # גישה לעמודות לפי שם
-    conn.execute("PRAGMA journal_mode=WAL")  # מצב WAL קריטי!
+    conn.row_factory = sqlite3.Row  # Access columns by name
+    conn.execute("PRAGMA journal_mode=WAL")  # Critical for race condition demo!
     return conn
 
 
 def init_database():
     """
-    אתחול מסד הנתונים - יצירת טבלאות ונתונים התחלתיים.
+    Initialize database - create tables and initial data.
     
-    טבלאות:
-    - users: משתמשי המערכת (id, name, is_premium)
-    - wallet: ארנק החברה (id, balance)
-    - audit_log: לוג פעולות להוכחת המתקפה
+    Tables:
+    - users: System users (id, name, is_premium)
+    - wallet: Company wallet (id, balance)
+    - audit_log: Action log for proving the attack
     """
     conn = get_connection()
     cursor = conn.cursor()
     
-    # מחיקת טבלאות קיימות (לאיפוס)
+    # Drop existing tables (for reset)
     cursor.execute("DROP TABLE IF EXISTS users")
     cursor.execute("DROP TABLE IF EXISTS wallet")
     cursor.execute("DROP TABLE IF EXISTS audit_log")
     
-    # טבלת משתמשים
+    # Users table
     cursor.execute("""
         CREATE TABLE users (
             id INTEGER PRIMARY KEY,
@@ -63,7 +60,7 @@ def init_database():
         )
     """)
     
-    # טבלת ארנק (שורה אחת בלבד)
+    # Wallet table (single row)
     cursor.execute("""
         CREATE TABLE wallet (
             id INTEGER PRIMARY KEY CHECK (id = 1),
@@ -72,7 +69,7 @@ def init_database():
         )
     """)
     
-    # טבלת לוג פעולות - קריטית להוכחת המתקפה!
+    # Audit log table - critical for proving the attack!
     cursor.execute("""
         CREATE TABLE audit_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,7 +83,7 @@ def init_database():
         )
     """)
     
-    # הכנסת משתמשים התחלתיים
+    # Insert initial users
     users = [
         (1, 'Alice Johnson', 'alice@techcorp.io', 'Frontend Developer', '#6366f1'),
         (2, 'Bob Cohen', 'bob@techcorp.io', 'UI/UX Designer', '#06b6d4'),
@@ -96,7 +93,7 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO users (id, name, email, role, avatar_color) VALUES (?, ?, ?, ?, ?)", users)
     
-    # הכנסת יתרה התחלתית לארנק
+    # Insert initial wallet balance
     cursor.execute(
         "INSERT INTO wallet (id, balance, last_updated) VALUES (1, ?, ?)",
         (INITIAL_BALANCE, datetime.now())
@@ -105,19 +102,19 @@ def init_database():
     conn.commit()
     conn.close()
     
-    print(f"✅ מסד הנתונים אותחל בהצלחה!")
-    print(f"   📊 {NUM_USERS} משתמשים נוצרו")
-    print(f"   💰 יתרת ארנק: ${INITIAL_BALANCE}")
-    print(f"   💵 עלות שדרוג: ${UPGRADE_COST}")
+    print(f"✅ Database initialized successfully!")
+    print(f"   📊 {NUM_USERS} users created")
+    print(f"   💰 Wallet balance: ${INITIAL_BALANCE}")
+    print(f"   💵 Upgrade cost: ${UPGRADE_COST}")
 
 
 def reset_database():
-    """איפוס מסד הנתונים למצב התחלתי"""
+    """Reset database to initial state"""
     init_database()
 
 
 def get_wallet_balance():
-    """קבלת יתרת הארנק הנוכחית"""
+    """Fetch current wallet balance"""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT balance FROM wallet WHERE id = 1")
@@ -127,7 +124,7 @@ def get_wallet_balance():
 
 
 def get_all_users():
-    """קבלת כל המשתמשים"""
+    """Fetch all users"""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users ORDER BY id")
@@ -137,7 +134,7 @@ def get_all_users():
 
 
 def get_audit_log():
-    """קבלת לוג הפעולות"""
+    """Fetch audit log entries"""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM audit_log ORDER BY id DESC LIMIT 50")
@@ -147,7 +144,7 @@ def get_audit_log():
 
 
 def add_audit_log(action, user_id, balance_before, balance_after, status, thread_id=""):
-    """הוספת רשומה ללוג"""
+    """Add entry to audit log"""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -158,6 +155,6 @@ def add_audit_log(action, user_id, balance_before, balance_after, status, thread
     conn.close()
 
 
-# אתחול אוטומטי אם הקובץ לא קיים
+# Auto-initialize if file doesn't exist
 if __name__ == "__main__":
     init_database()

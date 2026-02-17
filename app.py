@@ -1,9 +1,7 @@
 """
-app.py - שרת Flask
-==================
-שרת האינטרנט המספק את ה-API וה-Dashboard.
-
-Flask Server providing the API endpoints and Dashboard.
+app.py - Flask Server
+====================
+Web server providing API endpoints and web dashboard.
 """
 
 from flask import Flask, render_template, jsonify, request
@@ -16,42 +14,42 @@ import os
 
 app = Flask(__name__)
 
-# ודא שהדאטאבייס קיים
+# Initialize database if not exists
 if not os.path.exists('saas_platform.db'):
     init_database()
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 🖥️ FRONTEND ROUTES
+# FRONTEND ROUTES
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/')
 def landing():
-    """דף הנחיתה הראשי"""
+    """Landing page"""
     return render_template('index.html')
 
 
 @app.route('/login')
 def login_page():
-    """דף ההתחברות"""
+    """Login page"""
     return render_template('login.html')
 
 
 @app.route('/dashboard')
 def dashboard():
-    """דף הדאשבורד - פאנל ניהול"""
+    """Dashboard - Admin panel"""
     return render_template('dashboard.html')
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 📊 API ROUTES - DATA
+# API ROUTES - DATA
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/api/stats')
 def get_stats():
     """
-    קבלת סטטיסטיקות המערכת בזמן אמת.
-    משמש את הדאשבורד לעדכון התצוגה.
+    Fetch real-time system statistics.
+    Used by dashboard to update platform data.
     """
     balance = get_wallet_balance()
     users = get_all_users()
@@ -81,21 +79,21 @@ def get_stats():
 
 @app.route('/api/logs')
 def get_logs():
-    """קבלת לוג הפעולות"""
+    """Fetch audit log entries"""
     return jsonify(get_audit_log())
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 🔴 API ROUTES - VULNERABLE ENDPOINT
+# API ROUTES - VULNERABLE ENDPOINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/api/upgrade', methods=['POST'])
 def upgrade_endpoint():
     """
-    🔴 נקודת קצה פגיעה לשדרוג משתמש.
+    Vulnerable endpoint for user premium upgrade.
     
-    זוהי נקודת הקצה שעליה מתבצעת המתקפה!
-    היא קוראת לפונקציה vulnerable_upgrade שמכילה את חלון הפגיעות.
+    This is the endpoint targeted by the race condition attack!
+    Calls vulnerable_upgrade() which contains the security flaw.
     
     Request Body:
         {"user_id": 1}
@@ -104,26 +102,26 @@ def upgrade_endpoint():
     user_id = data.get('user_id')
     
     if not user_id:
-        return jsonify({"success": False, "error": "חסר user_id"}), 400
+        return jsonify({"success": False, "error": "Missing user_id"}), 400
     
     result = vulnerable_upgrade(user_id)
     
-    # מחזירים 200 OK גם אם הפעולה נכשלה (לצורך הדגמה)
-    # בסביבה אמיתית היינו מחזירים קוד שגיאה מתאים
+    # Returns 200 OK even on failure (for demonstration purposes)
+    # In production, proper HTTP status codes would be used
     return jsonify(result)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 🟢 API ROUTES - SECURE ENDPOINT
+# API ROUTES - SECURE ENDPOINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/api/upgrade/secure', methods=['POST'])
 def secure_upgrade_endpoint():
     """
-    🟢 נקודת קצה מאובטחת לשדרוג משתמש.
+    Secure endpoint for user premium upgrade.
     
-    זוהי נקודת הקצה המתוקנת!
-    היא קוראת לפונקציה secure_upgrade שמשתמשת בעדכון אטומי.
+    This is the fixed endpoint using atomic transaction!
+    Calls secure_upgrade() which prevents race conditions.
     
     Request Body:
         {"user_id": 1}
@@ -132,32 +130,32 @@ def secure_upgrade_endpoint():
     user_id = data.get('user_id')
     
     if not user_id:
-        return jsonify({"success": False, "error": "חסר user_id"}), 400
+        return jsonify({"success": False, "error": "Missing user_id"}), 400
     
     result = secure_upgrade(user_id)
     return jsonify(result)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 🔄 API ROUTES - MANAGEMENT
+# API ROUTES - MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/api/reset', methods=['POST'])
 def reset_endpoint():
     """
-    איפוס המערכת למצב התחלתי.
-    משמש להרצה חוזרת של ההדגמה.
+    Reset system to initial state.
+    Used for rerunning the demonstration.
     """
     reset_database()
     return jsonify({
         "success": True,
-        "message": "המערכת אופסה בהצלחה",
+        "message": "System reset successfully",
         "balance": INITIAL_BALANCE
     })
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 🚀 SERVER STARTUP
+# SERVER STARTUP
 # ═══════════════════════════════════════════════════════════════════════════════
 
 if __name__ == '__main__':
@@ -178,6 +176,5 @@ if __name__ == '__main__':
 ╚═══════════════════════════════════════════════════════════════════╝
     """)
     
-    # הפעלת השרת
-    # threaded=True מאפשר טיפול בבקשות מקביליות
+    # Start server with threaded mode for concurrent request handling
     app.run(debug=True, threaded=True, port=5000)

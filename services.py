@@ -1,12 +1,11 @@
 """
-services.py - לוגיקה עסקית
+services.py - Business Logic
 ============================
-מכיל שתי גרסאות של פונקציית השדרוג:
-1. vulnerable_upgrade - הגרסה הפגיעה (TOCTOU)
-2. secure_upgrade - הגרסה המאובטחת (Atomic)
+Contains two versions of the upgrade function:
+1. vulnerable_upgrade - Vulnerable version (TOCTOU)
+2. secure_upgrade - Secure version (Atomic)
 
-This module contains the business logic with both vulnerable
-and secure implementations of the upgrade function.
+Demonstrates the race condition exploit and its fix.
 """
 
 import time
@@ -14,13 +13,13 @@ import threading
 from datetime import datetime
 from database import get_connection, add_audit_log, UPGRADE_COST
 
-# משתנה גלובלי לזיהוי thread (להדגמה)
+# Global counter for unique request IDs
 request_counter = 0
 counter_lock = threading.Lock()
 
 
 def get_request_id():
-    """יצירת מזהה ייחודי לבקשה"""
+    """Generate unique ID for each request"""
     global request_counter
     with counter_lock:
         request_counter += 1
@@ -28,32 +27,32 @@ def get_request_id():
 
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
-# ║                        🔴 VULNERABLE UPGRADE FUNCTION                       ║
+# ║                        VULNERABLE UPGRADE FUNCTION                          ║
 # ║                                                                            ║
-# ║  זוהי הפונקציה הפגיעה! היא משתמשת בדפוס Check-Then-Act שגוי:              ║
-# ║  1. קוראת את היתרה (SELECT)                                               ║
-# ║  2. בודקת אם יש מספיק כסף                                                 ║
-# ║  3. ⚠️ השהייה מלאכותית - כאן חלון הפגיעות! ⚠️                            ║
-# ║  4. מעדכנת את היתרה (UPDATE)                                              ║
+# ║  This function is vulnerable! It uses the wrong Check-Then-Act pattern:    ║
+# ║  1. Read balance (SELECT)                                                 ║
+# ║  2. Check if enough funds                                                 ║
+# ║  3. ⚠️ Artificial delay - vulnerability window! ⚠️                        ║
+# ║  4. Update balance (UPDATE)                                               ║
 # ║                                                                            ║
-# ║  בין שלב 2 ל-4, בקשות אחרות יכולות "לנצח במרוץ"                          ║
+# ║  Between step 2 and 4, other requests can "win the race"                  ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 def vulnerable_upgrade(user_id: int) -> dict:
     """
-    🔴 פונקציית שדרוג פגיעה - TOCTOU Race Condition
+    Vulnerable function - TOCTOU Race Condition
     
-    הבעיה: יש הפרדה בין הבדיקה (Check) לבין הפעולה (Act).
-    בתרחיש אמיתי, ההשהייה יכולה להיות:
-    - קריאה לשער תשלומים חיצוני (Stripe, PayPal)
-    - בדיקת הרשאות מול שירות חיצוני
-    - עומס על השרת
+    Issue: Gap between Check and Act phases.
+    In real scenarios, the delay could be:
+    - External payment gateway call (Stripe, PayPal)
+    - Permission verification from external service
+    - Server load/network latency
     
     Args:
-        user_id: מזהה המשתמש לשדרוג
+        user_id: ID of user to upgrade
         
     Returns:
-        dict עם תוצאת הפעולה
+        dict with operation result
     """
     request_id = get_request_id()
     conn = get_connection()
@@ -61,15 +60,15 @@ def vulnerable_upgrade(user_id: int) -> dict:
     
     try:
         # ═══════════════════════════════════════════════════════════════
-        # שלב 1: CHECK - קריאת היתרה הנוכחית
+        # PHASE 1: CHECK - Read current balance
         # ═══════════════════════════════════════════════════════════════
         cursor.execute("SELECT balance FROM wallet WHERE id = 1")
         balance_before = cursor.fetchone()['balance']
         
-        print(f"[{request_id}] 📖 קריאת יתרה: ${balance_before}")
+        print(f"[{request_id}] 📖 Reading balance: ${balance_before}")
         
         # ═══════════════════════════════════════════════════════════════
-        # שלב 2: VALIDATE - בדיקה אם יש מספיק כסף
+        # PHASE 2: VALIDATE - Check if enough funds
         # ═══════════════════════════════════════════════════════════════
         if balance_before < UPGRADE_COST:
             add_audit_log(
@@ -82,41 +81,41 @@ def vulnerable_upgrade(user_id: int) -> dict:
             )
             return {
                 "success": False,
-                "error": "אין מספיק כסף בארנק",
+                "error": "Insufficient funds in wallet",
                 "balance": balance_before,
                 "request_id": request_id
             }
         
-        print(f"[{request_id}] ✅ בדיקה עברה: ${balance_before} >= ${UPGRADE_COST}")
+        print(f"[{request_id}] ✅ Check passed: ${balance_before} >= ${UPGRADE_COST}")
         
         # ╔══════════════════════════════════════════════════════════════╗
-        # ║  ⚠️⚠️⚠️ CRITICAL SECTION - חלון הפגיעות! ⚠️⚠️⚠️              ║
+        # ║  ⚠️⚠️⚠️ CRITICAL SECTION - VULNERABILITY WINDOW! ⚠️⚠️⚠️     ║
         # ║                                                              ║
-        # ║  ההשהייה הזו מדמה:                                          ║
-        # ║  - קריאה לשער תשלומים (100-500ms)                           ║
-        # ║  - אימות מול שירות חיצוני                                   ║
-        # ║  - עומס על השרת                                             ║
+        # ║  This delay simulates:                                      ║
+        # ║  - External payment gateway call (100-500ms)                ║
+        # ║  - Authorization check with external service               ║
+        # ║  - Server load/network latency                              ║
         # ║                                                              ║
-        # ║  בזמן הזה, בקשות אחרות יכולות:                              ║
-        # ║  1. לקרוא את אותה יתרה ($100)                               ║
-        # ║  2. לעבור את הבדיקה                                         ║
-        # ║  3. להמשיך לשלב העדכון                                      ║
+        # ║  During this time, other requests can:                      ║
+        # ║  1. Read the same balance ($100)                            ║
+        # ║  2. Pass the check                                          ║
+        # ║  3. Proceed to update phase                                 ║
         # ╚══════════════════════════════════════════════════════════════╝
         
-        print(f"[{request_id}] ⏳ מעבד תשלום... (השהייה 0.5 שניות)")
-        time.sleep(0.5)  # 500ms - מספיק זמן למרוץ
+        print(f"[{request_id}] ⏳ Processing payment... (0.5s delay)")
+        time.sleep(0.5)  # 500ms - sufficient for race condition
         
         # ═══════════════════════════════════════════════════════════════
-        # שלב 3: ACT - עדכון היתרה ושדרוג המשתמש
-        # ⚠️ הבעיה: אנחנו משתמשים בערך הישן שקראנו קודם!
+        # PHASE 3: ACT - Update balance and upgrade user
+        # ⚠️ VULNERABILITY: We use the old value we read earlier!
         # ═══════════════════════════════════════════════════════════════
         
-        # קריאה מחדש של היתרה הנוכחית (אמיתית)
+        # Read current balance (actual)
         cursor.execute("SELECT balance FROM wallet WHERE id = 1")
         current_balance = cursor.fetchone()['balance']
         
-        # מחשבים את היתרה החדשה על בסיס מה שקראנו בהתחלה (לא הנוכחית!)
-        # זו הפגיעות - אנחנו מעדכנים לערך מחושב מראש
+        # Calculate new balance using the OLD value we read (not current!)
+        # This is the vulnerability - we update with a pre-calculated value
         new_balance = balance_before - UPGRADE_COST
         
         cursor.execute(
@@ -131,10 +130,10 @@ def vulnerable_upgrade(user_id: int) -> dict:
         
         conn.commit()
         
-        print(f"[{request_id}] 💰 יתרה עודכנה: ${balance_before} → ${new_balance}")
-        print(f"[{request_id}] 👑 משתמש {user_id} שודרג לפרימיום!")
+        print(f"[{request_id}] 💰 Balance updated: ${balance_before} → ${new_balance}")
+        print(f"[{request_id}] 👑 User {user_id} upgraded to premium!")
         
-        # רישום ללוג
+        # Log transaction
         add_audit_log(
             action="UPGRADE_SUCCESS",
             user_id=user_id,
@@ -146,7 +145,7 @@ def vulnerable_upgrade(user_id: int) -> dict:
         
         return {
             "success": True,
-            "message": f"משתמש {user_id} שודרג בהצלחה!",
+            "message": f"User {user_id} upgraded successfully!",
             "balance_before": balance_before,
             "balance_after": new_balance,
             "request_id": request_id
@@ -154,7 +153,7 @@ def vulnerable_upgrade(user_id: int) -> dict:
         
     except Exception as e:
         conn.rollback()
-        print(f"[{request_id}] ❌ שגיאה: {str(e)}")
+        print(f"[{request_id}] ❌ Error: {str(e)}")
         return {
             "success": False,
             "error": str(e),
@@ -165,53 +164,53 @@ def vulnerable_upgrade(user_id: int) -> dict:
 
 
 # ╔════════════════════════════════════════════════════════════════════════════╗
-# ║                        🟢 SECURE UPGRADE FUNCTION                          ║
+# ║                        SECURE UPGRADE FUNCTION                              ║
 # ║                                                                            ║
-# ║  זוהי הפונקציה המאובטחת! היא משתמשת ב-Atomic Update:                      ║
+# ║  This function is secure! Uses Atomic Update:                             ║
 # ║  UPDATE ... WHERE balance >= cost                                         ║
 # ║                                                                            ║
-# ║  הבדיקה והעדכון מתבצעים באותה פעולה אטומית,                               ║
-# ║  כך שאין חלון לתנאי מרוץ.                                                 ║
+# ║  Check and Act execute as a SINGLE atomic operation,                      ║
+# ║  eliminating the race condition window.                                   ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 def secure_upgrade(user_id: int) -> dict:
     """
-    🟢 פונקציית שדרוג מאובטחת - Atomic Transaction
+    Secure function - Atomic Transaction
     
-    הפתרון: שימוש בעדכון אטומי עם תנאי WHERE.
-    מסד הנתונים מבטיח שהבדיקה והעדכון מתבצעים כפעולה אחת.
+    Solution: Use atomic update with WHERE condition.
+    Database ensures check and update happen as single operation.
     
     SQL: UPDATE wallet SET balance = balance - 100 
          WHERE id = 1 AND balance >= 100
          
-    אם התנאי לא מתקיים (אין מספיק כסף), אף שורה לא מתעדכנת.
+    If condition fails (insufficient funds), no rows are updated.
     
     Args:
-        user_id: מזהה המשתמש לשדרוג
+        user_id: ID of user to upgrade
         
     Returns:
-        dict עם תוצאת הפעולה
+        dict with operation result
     """
     request_id = get_request_id()
     conn = get_connection()
     cursor = conn.cursor()
     
     try:
-        # קריאת יתרה לפני (לצורך הלוג בלבד)
+        # Read balance before (for audit log only)
         cursor.execute("SELECT balance FROM wallet WHERE id = 1")
         balance_before = cursor.fetchone()['balance']
         
-        print(f"[{request_id}] 📖 יתרה נוכחית: ${balance_before}")
+        print(f"[{request_id}] 📖 Current balance: ${balance_before}")
         
         # ═══════════════════════════════════════════════════════════════
-        # ⚡ ATOMIC UPDATE - הבדיקה והעדכון באותה פעולה!
+        # ⚡ ATOMIC UPDATE - Check and Act in ONE operation!
         # ═══════════════════════════════════════════════════════════════
         # 
-        # הקסם כאן: התנאי WHERE balance >= ? מבטיח שהעדכון יתבצע
-        # רק אם יש מספיק כסף ברגע הביצוע בפועל.
+        # The WHERE balance >= ? condition ensures update only happens
+        # if sufficient funds exist AT THE TIME of execution.
         # 
-        # מסד הנתונים נועל את השורה בזמן הבדיקה והעדכון,
-        # כך שבקשות מקביליות יחכו בתור.
+        # Database locks the row during check and update,
+        # making concurrent requests wait in queue.
         #
         cursor.execute("""
             UPDATE wallet 
@@ -219,9 +218,9 @@ def secure_upgrade(user_id: int) -> dict:
             WHERE id = 1 AND balance >= ?
         """, (UPGRADE_COST, datetime.now(), UPGRADE_COST))
         
-        # בדיקה אם העדכון הצליח (האם שורה עודכנה?)
+        # Check if update succeeded (was any row updated?)
         if cursor.rowcount == 0:
-            # לא עודכנה שורה = לא היה מספיק כסף
+            # No row updated = insufficient funds
             add_audit_log(
                 action="SECURE_UPGRADE_ATTEMPT",
                 user_id=user_id,
@@ -230,15 +229,15 @@ def secure_upgrade(user_id: int) -> dict:
                 status="REJECTED - Atomic check failed",
                 thread_id=request_id
             )
-            print(f"[{request_id}] 🛡️ נחסם! אין מספיק כסף (בדיקה אטומית)")
+            print(f"[{request_id}] 🛡️ Blocked! Insufficient funds (atomic check)")
             return {
                 "success": False,
-                "error": "אין מספיק כסף בארנק (בדיקה אטומית)",
+                "error": "Insufficient funds (atomic transaction)",
                 "balance": balance_before,
                 "request_id": request_id
             }
         
-        # העדכון הצליח - משדרגים את המשתמש
+        # Update succeeded - upgrade user
         cursor.execute(
             "UPDATE users SET is_premium = 1, upgraded_at = ? WHERE id = ?",
             (datetime.now(), user_id)
@@ -246,12 +245,12 @@ def secure_upgrade(user_id: int) -> dict:
         
         conn.commit()
         
-        # קריאת יתרה אחרי
+        # Read balance after
         cursor.execute("SELECT balance FROM wallet WHERE id = 1")
         balance_after = cursor.fetchone()['balance']
         
-        print(f"[{request_id}] 🟢 שדרוג מאובטח הצליח!")
-        print(f"[{request_id}] 💰 יתרה: ${balance_before} → ${balance_after}")
+        print(f"[{request_id}] 🟢 Secure upgrade successful!")
+        print(f"[{request_id}] 💰 Balance: ${balance_before} → ${balance_after}")
         
         add_audit_log(
             action="SECURE_UPGRADE_SUCCESS",
@@ -264,7 +263,7 @@ def secure_upgrade(user_id: int) -> dict:
         
         return {
             "success": True,
-            "message": f"משתמש {user_id} שודרג בהצלחה! (מאובטח)",
+            "message": f"User {user_id} upgraded successfully! (secure)",
             "balance_before": balance_before,
             "balance_after": balance_after,
             "request_id": request_id
@@ -272,7 +271,7 @@ def secure_upgrade(user_id: int) -> dict:
         
     except Exception as e:
         conn.rollback()
-        print(f"[{request_id}] ❌ שגיאה: {str(e)}")
+        print(f"[{request_id}] ❌ Error: {str(e)}")
         return {
             "success": False,
             "error": str(e),
