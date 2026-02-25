@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-3.0-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 
 **A comprehensive security lab demonstrating Time-of-Check to Time-of-Use (TOCTOU) race condition vulnerabilities in web applications.**
 
