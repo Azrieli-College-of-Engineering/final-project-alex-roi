@@ -126,7 +126,7 @@ if cursor.rowcount == 0:
 
 - [OWASP Race Conditions](https://owasp.org/www-community/vulnerabilities/Race_condition)
 - [CWE-367: TOCTOU Race Condition](https://cwe.mitre.org/data/definitions/367.html)
-- CVE-2026-22820 (Inspiration)
+
 
 ---
 
@@ -188,18 +188,5 @@ python attack_tool.py --reset
 
 ---
 
-## 📄 License
-
-This project is for educational purposes only. Use responsibly.
-
-MIT License - See [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-
-**🎓 Web Security Course - Final Project**
-
-Made with ❤️ for educational purposes
 
 </div>
