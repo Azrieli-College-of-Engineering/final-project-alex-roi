@@ -124,9 +124,9 @@ if cursor.rowcount == 0:
 
 ### 📚 References
 
-- [OWASP Race Conditions](https://owasp.org/www-community/vulnerabilities/Race_condition)
+- [OWASP Race Conditions](https://owasp.org/www-chapter-bangkok/slides/2024/2024-07-05_The-Race-is-On.pdf)
 - [CWE-367: TOCTOU Race Condition](https://cwe.mitre.org/data/definitions/367.html)
-
+- [CVE-2026-22820](https://www.cve.org/CVERecord?id=CVE-2026-22820)
 
 ---
 
